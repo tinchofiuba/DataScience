@@ -1,0 +1,31 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.cluster.hierarchy as sch
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.datasets import make_blobs
+
+#genero 3 grupos
+X, _ = make_blobs(n_samples=300, centers=[(-2, 2), (2, 2), (0, -2)], cluster_std=0.6, random_state=42)
+
+#creo dendogramas
+plt.figure(figsize=(10,6))
+sch.dendrogram(sch.linkage(X, method='ward'))
+plt.title("Dendrograma - Clustering Jerárquico")
+plt.xlabel("Puntos de datos")
+plt.ylabel("Distancia")
+plt.show()
+
+#creo 3 clusters
+hc = AgglomerativeClustering(n_clusters=3, affinity='euclidean', linkage='ward')
+labels = hc.fit_predict(X)
+
+plt.figure(figsize=(8,6))
+unique_labels = np.unique(labels)
+colors = ['blue', 'green', 'orange', 'purple', 'red']
+
+for label, color in zip(unique_labels, colors):
+    plt.scatter(X[labels == label, 0], X[labels == label, 1], c=color, label=f"Cluster {label}")
+
+plt.legend()
+plt.title("Clustering Jerárquico con 3 Clusters")
+plt.show()
