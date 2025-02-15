@@ -1,0 +1,31 @@
+#lo uso más que nada para detectar clusters definidos correctamente y para clusters compactos. se valora mucho al tener gran cantidad de datos.
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+
+np.random.seed(42)
+ingresos = np.random.randint(15000, 90000, 100)  #datos ficticios
+gasto = np.random.randint(1, 100, 100)  # % de gasto en la tienda
+
+df = pd.DataFrame({'Ingresos': ingresos, 'Gasto': gasto})
+
+kmeans = KMeans(n_clusters=3, random_state=42)
+df['Cluster'] = kmeans.fit_predict(df[['Ingresos', 'Gasto']])
+
+plt.figure(figsize=(8,6))
+for cluster in range(3):
+    plt.scatter(df[df['Cluster'] == cluster]['Ingresos'], 
+                df[df['Cluster'] == cluster]['Gasto'], 
+                label=f'Cluster {cluster}')
+
+# Marcar centroides
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], 
+            s=200, c='red', marker='X', label='Centroides')
+
+plt.xlabel('Ingresos Anuales ($)')
+plt.ylabel('Puntaje de Gasto')
+plt.legend()
+plt.title('Segmentación de clientes con K-Means')
+plt.show()
