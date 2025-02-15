@@ -1,0 +1,22 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.ensemble import IsolationForest
+from sklearn.datasets import make_blobs
+
+#defino ciertos clusters definidos dentro de todo bien
+X, _ = make_blobs(n_samples=300, centers=[(2, 2), (-2, -2)], cluster_std=0.6, random_state=42)
+
+#propongo ciertos valores anómalos
+outliers = np.array([[4, 4], [-4, -4], [3, -3], [-3, 3]])  # Puntos alejados del resto
+X = np.vstack([X, outliers])
+
+
+iso_forest = IsolationForest(contamination=0.05, random_state=42)  # Detectamos 5% de anomalías
+y_pred = iso_forest.fit_predict(X)
+
+plt.figure(figsize=(8,6))
+plt.scatter(X[y_pred == 1][:, 0], X[y_pred == 1][:, 1], c="blue", label="Datos normales")
+plt.scatter(X[y_pred == -1][:, 0], X[y_pred == -1][:, 1], c="red", marker="x", s=100, label="Anomalías")
+plt.legend()
+plt.title("Detección de Anomalías con Isolation Forest")
+plt.show()
