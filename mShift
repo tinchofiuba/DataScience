@@ -1,0 +1,27 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import MeanShift, estimate_bandwidth
+from sklearn.datasets import make_blobs
+
+#genero 3 puntos de cluster
+X, _ = make_blobs(n_samples=300, centers=[(-2, 2), (2, 2), (0, -2)], cluster_std=0.6, random_state=42)
+
+#propongo un cluster de 0.3
+bandwidth = estimate_bandwidth(X, quantile=0.3)
+
+mean_shift = MeanShift(bandwidth=bandwidth)
+labels = mean_shift.fit_predict(X)
+
+plt.figure(figsize=(8,6))
+unique_labels = np.unique(labels)
+colors = ['blue', 'green', 'orange', 'purple', 'red']
+
+for label, color in zip(unique_labels, colors):
+    plt.scatter(X[labels == label, 0], X[labels == label, 1], c=color, label=f"Cluster {label}")
+
+plt.scatter(mean_shift.cluster_centers_[:, 0], mean_shift.cluster_centers_[:, 1], 
+            s=200, c='black', marker='X', label='Centroides')
+
+plt.legend()
+plt.title("Clustering con Mean-Shift")
+plt.show()
